@@ -75,6 +75,16 @@ Um prompt pode ter um `promptfooconfig.yaml` opcional na própria pasta. Caminho
 
 O promptfoo envia o `prompt.md` inteiro, incluindo o frontmatter. Para enviar só o texto do prompt, use um script como `devops/padronizar-comunicacao-alertas/prompt-sem-frontmatter.cjs`, referenciado em `prompts:` com `file://prompt-sem-frontmatter.cjs`.
 
+Em `llm-rubric`, um `value: file://...` não recebe as variáveis do teste, e `.md` não é aceito nesse campo. Se a rubrica estiver em arquivo e usar variáveis, referencie-a em `options.rubricPrompt`. Esse arquivo precisa incluir `{{output}}` e pedir a resposta em JSON.
+
+`devops/analisar-causa-raiz-elasticsearch/` tem um gate de qualidade com juiz LLM e arquivos além da estrutura padrão:
+
+- `rubrica-juiz.txt`: rubrica aplicada pelo juiz.
+- `incidente/`: snapshots usados como entrada dos testes.
+- `calibracao/`: saídas fixas, gabarito humano, config e script para comparar o juiz com o gabarito.
+
+Ao alterar `rubrica-juiz.txt`, recalibre o juiz conforme o `README.md` do prompt.
+
 As chaves de API ficam em um `.env` na raiz, ignorado pelo Git. Para rodar a partir da raiz:
 
 ```bash

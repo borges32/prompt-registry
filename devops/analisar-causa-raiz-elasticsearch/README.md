@@ -27,8 +27,31 @@ Determinar a causa raiz de um incidente de degradação ou indisponibilidade de 
 
 ## Exemplo de uso
 
-_A preencher_
+Os snapshots do incidente de exemplo estão em [`incidente/`](./incidente/), e um relatório real gerado a partir deles está em [`calibracao/saidas/real-luna.md`](./calibracao/saidas/real-luna.md).
+
+## Gate de qualidade
+
+O [`promptfooconfig.yaml`](./promptfooconfig.yaml) testa o prompt em duas camadas, com 3 repetições e sem cache:
+
+- **Determinística:** formato do relatório, latência e custo.
+- **Juiz LLM:** aplica a [`rubrica-juiz.txt`](./rubrica-juiz.txt), com 4 critérios de 0 a 2. A saída passa com total de pelo menos 6 e nenhum critério zerado.
+
+Rode a partir da raiz do repositório:
+
+```bash
+npx promptfoo@latest eval -c devops/analisar-causa-raiz-elasticsearch/promptfooconfig.yaml
+```
+
+Qualquer reprovação termina com exit code 100. Sempre que `rubrica-juiz.txt` mudar, recalibre o juiz:
+
+```bash
+npx promptfoo@latest eval -c devops/analisar-causa-raiz-elasticsearch/calibracao/promptfooconfig.yaml --no-cache --repeat 5 -o resultado-calibracao.json
+node devops/analisar-causa-raiz-elasticsearch/calibracao/comparar.cjs resultado-calibracao.json
+```
+
+Na calibração, é normal o primeiro comando terminar com exit 100, porque algumas saídas devem reprovar. Quem decide o resultado é o `comparar.cjs`, que compara o juiz com o [`gabarito.json`](./calibracao/gabarito.json).
 
 ## Limitações conhecidas
 
-_A preencher_
+- O prompt não pede que os limites dos dados sejam declarados. Nos testes, as saídas passaram no gate, mas com nota parcial em honestidade epistêmica.
+- A rubrica e o gabarito são específicos do incidente de exemplo. Para testar outro incidente, é preciso escrever outra rubrica e calibrar de novo.
