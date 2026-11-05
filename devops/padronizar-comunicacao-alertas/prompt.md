@@ -16,7 +16,7 @@ Processar o snapshot de alertas fornecido e gerar um resultado estritamente padr
 ## Regras e Restrições
 1. **Estrutura Rígida**: Cada alerta processado deve conter exatamente os 5 campos na mesma ordem: ALERTA:, IMPACTO:, HIPÓTESE INICIAL:, AÇÃO IMEDIATA: e ESCALAR PARA:.
 2. **Linguagem Direta**: Mantenha as frases objetivas, técnicas e concisas.
-3. **Fidelidade aos Dados**: Extraia apenas as informações contidas no snapshot fornecido. Não invente métricas ou horários não citados.
+3. **Fidelidade aos Dados**: Extraia apenas as informações contidas no snapshot fornecido. Não invente métricas ou horários não citados. Cite cada valor exatamente como aparece, sem arredondar nem deduzir, e nunca apresente um limite como valor medido. Exemplo: para `disco 91%/95%`, escreva `disco em 91%/95%`, e não `disco atingiu 95%`.
 4. **Sem Texto Adicional**: Retorne APENAS o bloco de alertas padronizados. Não inclua saudações, preâmbulos nem explicações antes ou depois do resultado.
 
 ## Exemplos de Padrão (Few-Shot)

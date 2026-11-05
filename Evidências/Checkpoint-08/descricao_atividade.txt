@@ -1,0 +1,3 @@
+- Foi criado os arquivos de configuração do prompfoo "prompt-registry/devops/padronizar-comunicacao-alertas/promptfooconfig.yaml"
+- Foi utilizado o claude Opus 5.5 para a criação do arquivo de configuração e prompt.
+- Foi executado o "npx promptfoo@latest eval -c devops/padronizar-comunicacao-alertas/promptfooconfig.yaml" que gerou os resultados de sucesso das execuções, todos os testes passaram de primeira, evidencia em: evidencia_promptfoo.png

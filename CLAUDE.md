@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Propósito do repositório
 
-Catálogo de prompts em Markdown organizados por categoria / área de domínio. Não há código executável, build, testes ou pipeline — é um repositório documental cuja qualidade é medida pela clareza dos prompts e pela consistência da estrutura.
+Catálogo de prompts em Markdown organizados por categoria / área de domínio. Não há código executável, build ou pipeline — é um repositório documental cuja qualidade é medida pela clareza dos prompts, pela consistência da estrutura e, nos prompts que têm `promptfooconfig.yaml`, pelos testes de promptfoo.
 
 Compõe o material dos projetos da pós-graduação em AIOps e Inteligência Artificial com Engenharia Cloud ([pos.veronez.io/pos-aiops](https://pos.veronez.io/pos-aiops/)) — decisões de escopo e convenções devem considerar esse uso didático.
 
@@ -15,6 +15,8 @@ Compõe o material dos projetos da pós-graduação em AIOps e Inteligência Art
   <nome-do-prompt>/
     prompt.md    # o prompt em si (conteúdo que será copiado/usado)
     README.md    # metadados e documentação do prompt
+    promptfooconfig.yaml    # opcional: testes do prompt com promptfoo
+    prompt-sem-frontmatter.cjs    # opcional: envia o prompt aos testes sem o frontmatter
 ```
 
 Regras:
@@ -66,6 +68,19 @@ Regras:
 - **`inputs`**: lista com um item por placeholder `{{...}}` presente no corpo do prompt. Cada item tem `nome` (sem `{{}}`) e `descricao` (o que a variável representa). Se o prompt não tiver placeholders, usar `inputs: []`.
 
 **Duplicação consciente**: o frontmatter é idêntico em `prompt.md` e `README.md`. Edições manuais precisam ser replicadas nos dois arquivos — prefira usar `/catalogar` para evitar divergência.
+
+## Testes com promptfoo
+
+Um prompt pode ter um `promptfooconfig.yaml` opcional na própria pasta. Caminhos `file://` são relativos à pasta do config.
+
+O promptfoo envia o `prompt.md` inteiro, incluindo o frontmatter. Para enviar só o texto do prompt, use um script como `devops/padronizar-comunicacao-alertas/prompt-sem-frontmatter.cjs`, referenciado em `prompts:` com `file://prompt-sem-frontmatter.cjs`.
+
+As chaves de API ficam em um `.env` na raiz, ignorado pelo Git. Para rodar a partir da raiz:
+
+```bash
+npx promptfoo@latest eval -c <categoria>/<nome-do-prompt>/promptfooconfig.yaml
+npx promptfoo@latest view
+```
 
 ## Manutenção da documentação
 
