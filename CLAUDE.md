@@ -77,6 +77,8 @@ O promptfoo envia o `prompt.md` inteiro, incluindo o frontmatter. Para enviar s�
 
 Em `llm-rubric`, um `value: file://...` não recebe as variáveis do teste, e `.md` não é aceito nesse campo. Se a rubrica estiver em arquivo e usar variáveis, referencie-a em `options.rubricPrompt`. Esse arquivo precisa incluir `{{output}}` e pedir a resposta em JSON.
 
+Os prompts de saída estruturada (`padronizar-comunicacao-alertas`, `diagnosticar-pods-kubernetes` e `corrigir-manifesto-network-policy`) têm testes determinísticos com limites de 5 s e US$ 0,01 por chamada. Esses limites exigem chamadas reais, então os configs usam `cache: false`. `diagnosticar-pods-kubernetes/incidente/` guarda os snapshots usados como entrada dos testes.
+
 `devops/analisar-causa-raiz-elasticsearch/` tem um gate de qualidade com juiz LLM e arquivos além da estrutura padrão:
 
 - `rubrica-juiz.txt`: rubrica aplicada pelo juiz.

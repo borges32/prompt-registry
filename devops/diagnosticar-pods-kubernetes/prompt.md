@@ -1,7 +1,7 @@
 ---
 nome: Diagnosticar Pods Kubernetes
 descricao: Analisa um snapshot de pods, eventos e logs do Kubernetes e entrega a causa raiz provável com ações para o plantão
-versao: 1.0.0
+versao: 1.1.0
 tags: [kubernetes, troubleshooting, sre, diagnóstico, incidentes]
 inputs:
   - nome: snapshot
@@ -67,6 +67,8 @@ Apresente estritamente o relatório abaixo:
 - **Ação Recomendada**: Nenhuma ação necessária no momento.
 
 # Regras e Restrições
+- **Seja conciso**: Escreva cada campo do relatório em uma única frase curta, porque o plantonista precisa ler durante o incidente.
+- **Omita o que não existe**: Se o snapshot não trouxer log ou evento de um pod, remova o campo correspondente em vez de preenchê-lo com outro dado.
 - **Não faça dumps crus**: Não repita blocos longos de logs ou eventos não formatados.
 - **Não especule sem evidência**: Se os logs forem inconclusivos, declare explicitamente o que falta (ex: "Causa provável: Falha de banco, mas requer verificação de rede pois o log cortou").
 - **Foco na Causa Raiz**: Nunca reporte apenas o `STATUS` como causa (ex: dizer que a causa é "CrashLoopBackOff" é incorreto; a causa é o erro de código ou falta de memória que gerou o crash).

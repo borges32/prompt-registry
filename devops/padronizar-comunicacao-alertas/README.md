@@ -32,6 +32,17 @@ AÇÃO IMEDIATA: rollback iniciado via Argo CD
 ESCALAR PARA: @relay-core se a rejeição não cair em 10min
 ```
 
+## Testes
+
+O [`promptfooconfig.yaml`](./promptfooconfig.yaml) roda os 3 alertas crus com `gpt-4o-mini`, com 3 repetições e sem cache. Cada saída precisa ter os cinco rótulos, um handle `@palavra` em `ESCALAR PARA:` e no máximo 8 linhas, com até 5 s e US$ 0,01 por chamada.
+
+```bash
+npx promptfoo@latest eval -c devops/padronizar-comunicacao-alertas/promptfooconfig.yaml
+```
+
 ## Limitações conhecidas
 
-_A preencher_
+- Os testes verificam a estrutura, não a fidelidade ao alerta. O modelo pode repetir ações dos exemplos, como "rollback iniciado via Argo CD", ou criar prazos de escalonamento que o alerta não informa.
+- O handle de escalonamento é escolhido pelo modelo, porque o alerta não informa o time responsável.
+- Alertas em inglês podem gerar notas que misturam inglês e português.
+- O teste com um segundo fornecedor ainda não foi executado.
