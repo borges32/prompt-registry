@@ -16,6 +16,16 @@ Convenções de estrutura, nomenclatura e manutenção estão em [`CLAUDE.md`](.
 
 Use o slash command [`/catalogar`](./.claude/commands/catalogar.md) passando o texto do prompt como argumento. Ele analisa, propõe organização (categoria, slug, frontmatter) e, após sua aprovação, escreve os arquivos e atualiza os índices — sem commitar. Convenções completas em [`CLAUDE.md`](./CLAUDE.md).
 
+## Testes e pipeline
+
+Cada prompt de `devops/` e `desenvolvimento/` tem uma suíte [promptfoo](https://www.promptfoo.dev) no `promptfooconfig.yaml` da própria pasta. O workflow [`avaliar-prompts.yml`](./.github/workflows/avaliar-prompts.yml) roda as suítes dos prompts alterados em todo pull request e push na `main`, comenta o resultado no PR e falha o build quando um prompt regride. A estratégia do gate está em [`Entregas/checkpoint-10/README.md`](./Entregas/checkpoint-10/README.md).
+
+Para rodar uma suíte localmente, com `OPENAI_API_KEY` em um `.env` na raiz:
+
+```bash
+npx promptfoo@latest eval -c <categoria>/<nome-do-prompt>/promptfooconfig.yaml
+```
+
 ## Categorias
 
 ### [Desenvolvimento](./desenvolvimento/)

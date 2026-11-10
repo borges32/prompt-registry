@@ -24,8 +24,21 @@ Avaliar criticamente o manifesto Kubernetes corrigido produzido por um modelo de
 
 ## Exemplo de uso
 
-_A preencher_
+Substituir `{{snapshot_inputs_originais}}` pelas entradas usadas na correção (manifesto, padrão de NetworkPolicy e lista de serviços) e `{{snapshot_resultado_correcao}}` pela resposta da correção. Um exemplo de cada está em [`entrada/`](./entrada/). A saída traz a tabela de notas por critério, a nota final de 0,0 a 5,0 e o parecer `APROVADO PARA DEPLOY` ou `REPROVADO - NECESSITA REVISÃO`.
+
+## Testes
+
+O [`promptfooconfig.yaml`](./promptfooconfig.yaml) usa as entradas do Checkpoint 06 em [`entrada/`](./entrada/) com `gpt-4.1-mini`, com 3 repetições e sem cache. Como o prompt já emite nota e status, todos os testes são determinísticos:
+
+- **Correção conforme** (a do CP06): deve sair `APROVADO PARA DEPLOY` com nota final de pelo menos 4,0.
+- **Correção não conforme** (com os labels inventados `app: sentinel-api` e `prometheus` e com egress aberto): deve sair `REPROVADO` com nota de no máximo 3,0, apontando as alucinações e o egress aberto.
+- **Ambas:** as 4 seções do formato, a nota final coerente com a média ponderada da tabela (folga de 0,3), resposta em até 60 s e custo de até US$ 0,01 por chamada.
+
+```bash
+npx promptfoo@latest eval -c devops/avaliar-manifesto-network-policy-corrigido/promptfooconfig.yaml
+```
 
 ## Limitações conhecidas
 
-_A preencher_
+- A nota final nem sempre é a média ponderada exata: o modelo às vezes arredonda para meio ponto (ex.: 1,725 virou 2,0). O teste aceita diferença de até 0,3, porque a decisão de aprovar ou reprovar não muda.
+- A avaliação é feita só pela leitura. O prompt não executa `kubectl` nem valida o YAML contra a API do Kubernetes.

@@ -25,6 +25,18 @@ Dado o snapshot de documentação e ambiente do sistema Forge, o prompt assume o
 
 Substituir `{{dados_do_sistema_e_ambiente}}` pela documentação e pelos dados do ambiente do sistema Forge. A saída é o relatório com mapeamento do estado atual, análise dos caminhos, recomendação técnica e o bloco de exportação.
 
+## Testes
+
+O [`promptfooconfig.yaml`](./promptfooconfig.yaml) usa a documentação do Forge do Checkpoint 05 em [`entrada/`](./entrada/) com `gpt-4.1-mini`, com 3 repetições e sem cache:
+
+- **Determinístico:** as 4 seções, ao menos 2 caminhos, o bloco `<passo1_result>` com conteúdo (o passo seguinte da cadeia depende dele), os dependentes Sentinel, Cerebro e Pepper citados, resposta em até 120 s e custo de até US$ 0,02 por chamada.
+- **Juiz (`gpt-5.6-luna`):** confere se a recomendação é incremental e reversível, se a falha em cascata do lote aparece, se não há números de volumetria inventados e se a justificativa compara custo, complexidade, latência e impacto. Passa com 3 de 4 critérios, desde que a recomendação seja incremental e não invente números.
+
+```bash
+npx promptfoo@latest eval -c desenvolvimento/diagnosticar-migracao-batch-tempo-real/promptfooconfig.yaml
+```
+
 ## Limitações conhecidas
 
-_A preencher_
+- A documentação de exemplo não traz volumetria. O prompt não pede que as lacunas sejam declaradas, então o modelo às vezes cita latências típicas de uma tecnologia sem marcá-las como estimativa.
+- A entrada do teste é fixa. Ela não cobre sistemas diferentes do Forge.

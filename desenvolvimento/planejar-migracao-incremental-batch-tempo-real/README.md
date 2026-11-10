@@ -25,6 +25,18 @@ Com base no diagnóstico já concluído do sistema Forge, o prompt assume o pape
 
 Substituir `{{resultado_prompt_1}}` pelo resultado do diagnóstico do Forge. A saída é o plano com análise de estratégias, escolha justificada, roadmap em quatro fases, matriz de riscos com rollback e o bloco de exportação.
 
+## Testes
+
+O [`promptfooconfig.yaml`](./promptfooconfig.yaml) usa como entrada a saída do passo 1 gerada no Checkpoint 05, em [`entrada/`](./entrada/), e não uma execução ao vivo do passo 1. Assim, uma regressão aqui não se confunde com uma regressão do prompt anterior. Roda com `gpt-4.1-mini`, com 3 repetições e sem cache:
+
+- **Determinístico:** as 5 seções, as 4 fases, o bloco `<passo2_result>` com conteúdo, a menção a rollback, resposta em até 120 s e custo de até US$ 0,02 por chamada.
+- **Juiz (`gpt-5.6-luna`):** confere se a estratégia é incremental, se as fases de coexistência e cutover têm reversão concreta, se Sentinel, Cerebro e Pepper são atendidos durante a transição e se os riscos são específicos. Passa com 3 de 4 critérios, desde que os dois primeiros sejam atendidos.
+
+```bash
+npx promptfoo@latest eval -c desenvolvimento/planejar-migracao-incremental-batch-tempo-real/promptfooconfig.yaml
+```
+
 ## Limitações conhecidas
 
-_A preencher_
+- O prompt pede como reverter cada fase, mas o modelo costuma detalhar só a reversão da coexistência e do cutover. A reversão da desativação do lote (Fase 4) fica genérica, e por isso o juiz só exige reversão nas fases que afetam produção.
+- Sem `max_tokens` alto, a resposta é cortada no meio. O config usa 8192 tokens.

@@ -15,8 +15,9 @@ Compõe o material dos projetos da pós-graduação em AIOps e Inteligência Art
   <nome-do-prompt>/
     prompt.md    # o prompt em si (conteúdo que será copiado/usado)
     README.md    # metadados e documentação do prompt
-    promptfooconfig.yaml    # opcional: testes do prompt com promptfoo
-    prompt-sem-frontmatter.cjs    # opcional: envia o prompt aos testes sem o frontmatter
+    promptfooconfig.yaml    # testes do prompt com promptfoo (obrigatório em devops/ e desenvolvimento/)
+    prompt-sem-frontmatter.cjs    # envia o prompt aos testes sem o frontmatter
+    entrada/ ou incidente/    # entradas fixas usadas pelos testes
 ```
 
 Regras:
@@ -71,13 +72,19 @@ Regras:
 
 ## Testes com promptfoo
 
-Um prompt pode ter um `promptfooconfig.yaml` opcional na própria pasta. Caminhos `file://` são relativos à pasta do config.
+Todo prompt de `devops/` e `desenvolvimento/` tem um `promptfooconfig.yaml` na própria pasta. O pipeline barra prompt novo sem config (ver "Pipeline de avaliação"). Caminhos `file://` são relativos à pasta do config.
+
+As entradas fixas dos testes ficam em `incidente/` (prompts de incidente) ou `entrada/` (demais prompts). Os três prompts da cadeia do Forge (`desenvolvimento/`) são testados com a saída gravada do passo anterior, e não com uma execução ao vivo, para que uma regressão de um passo não apareça como falha do seguinte.
+
+O provider OpenAI do promptfoo limita a resposta a 1024 tokens por padrão. Prompts de relatório longo precisam de `config.max_tokens` no provider, senão a saída é cortada e os asserts de formato reprovam.
 
 O promptfoo envia o `prompt.md` inteiro, incluindo o frontmatter. Para enviar só o texto do prompt, use um script como `devops/padronizar-comunicacao-alertas/prompt-sem-frontmatter.cjs`, referenciado em `prompts:` com `file://prompt-sem-frontmatter.cjs`.
 
 Em `llm-rubric`, um `value: file://...` não recebe as variáveis do teste, e `.md` não é aceito nesse campo. Se a rubrica estiver em arquivo e usar variáveis, referencie-a em `options.rubricPrompt`. Esse arquivo precisa incluir `{{output}}` e pedir a resposta em JSON.
 
-Os prompts de saída estruturada (`padronizar-comunicacao-alertas`, `diagnosticar-pods-kubernetes` e `corrigir-manifesto-network-policy`) têm testes determinísticos com limites de 5 s e US$ 0,01 por chamada. Esses limites exigem chamadas reais, então os configs usam `cache: false`. `diagnosticar-pods-kubernetes/incidente/` guarda os snapshots usados como entrada dos testes.
+Os prompts de saída estruturada (`padronizar-comunicacao-alertas`, `diagnosticar-pods-kubernetes` e `corrigir-manifesto-network-policy`) têm testes determinísticos com limites de 5 s e US$ 0,01 por chamada. `avaliar-manifesto-network-policy-corrigido` também é só determinístico: ele já emite nota e status, e o teste confere se aprova uma correção conforme e reprova uma com labels inventados. Os limites de latência exigem chamadas reais, então todos os configs usam `cache: false`.
+
+`decidir-solucao-backpressure` e os três prompts de `desenvolvimento/` combinam asserts determinísticos (formato, blocos de exportação, termos obrigatórios, latência, custo) com um `llm-rubric` de 4 critérios escrito no próprio config. Cada rubrica cobra só o que o prompt pede: um critério que a versão atual não cumpre vira limitação no `README.md`, não requisito do gate.
 
 `devops/analisar-causa-raiz-elasticsearch/` tem um gate de qualidade com juiz LLM e arquivos além da estrutura padrão:
 
@@ -93,6 +100,18 @@ As chaves de API ficam em um `.env` na raiz, ignorado pelo Git. Para rodar a par
 npx promptfoo@latest eval -c <categoria>/<nome-do-prompt>/promptfooconfig.yaml
 npx promptfoo@latest view
 ```
+
+## Pipeline de avaliação
+
+[`.github/workflows/avaliar-prompts.yml`](./.github/workflows/avaliar-prompts.yml) roda as suítes no GitHub Actions com a action oficial `promptfoo/promptfoo-action`, fixada na versão 0.125.1 do promptfoo:
+
+- **Gatilhos:** pull request e push na `main` que alterem `devops/`, `desenvolvimento/` ou `.github/`; suíte completa toda segunda-feira e por disparo manual.
+- **Seleção:** [`.github/scripts/prompts-afetados.sh`](./.github/scripts/prompts-afetados.sh) roda só as suítes das pastas de prompt alteradas. Mudança em `.github/` roda todas.
+- **Cobertura:** [`.github/scripts/verificar-cobertura.sh`](./.github/scripts/verificar-cobertura.sh) falha se algum `prompt.md` não tiver `promptfooconfig.yaml`.
+- **Gate:** qualquer assert reprovado em qualquer repetição falha o job. O job `Gate de regressão` consolida o resultado e é o check obrigatório da `main`.
+- **Chave:** `OPENAI_API_KEY` fica em um secret do repositório.
+
+A estratégia de gate e a justificativa das escolhas estão em [`Entregas/checkpoint-10/README.md`](./Entregas/checkpoint-10/README.md). Ao criar uma categoria nova com prompts testados, inclua-a em `CATEGORIAS` nos dois scripts e em `paths` no workflow.
 
 ## Manutenção da documentação
 

@@ -26,6 +26,19 @@ Dado um snapshot do cenário do problema (arquitetura, métricas, gargalo, compo
 
 Substituir `{{snapshot_cenario}}` pela descrição da arquitetura, métricas e comportamento de produtores e consumidores, e `{{snapshot_caminhos}}` pela lista de soluções viáveis. A saída é o relatório com as seções: análise do cenário, avaliação dos caminhos, matriz de trade-offs, recomendação e plano de implementação.
 
+## Testes
+
+O [`promptfooconfig.yaml`](./promptfooconfig.yaml) roda o cenário do Relay em [`entrada/`](./entrada/) (o mesmo do Checkpoint 04) com `gpt-4.1-mini`, com 3 repetições e sem cache:
+
+- **Determinístico:** as 5 seções do relatório, os 4 caminhos do snapshot avaliados, a matriz com uma linha por caminho, a escolha marcada com 🏆, resposta em até 60 s e custo de até US$ 0,01 por chamada.
+- **Juiz (`gpt-5.6-luna`):** confere se a recomendação protege o SLA de 60 s do Sentinel, não aceita perda de telemetria, trata o orçamento estourado e usa os números do cenário. Passa com 3 de 4 critérios, desde que os dois primeiros sejam atendidos.
+
+```bash
+npx promptfoo@latest eval -c devops/decidir-solucao-backpressure/promptfooconfig.yaml
+```
+
 ## Limitações conhecidas
 
-_A preencher_
+- Nos testes, o modelo escolhe sempre "priorizar o Sentinel" e raramente usa a retenção de 4h na justificativa. Por isso o juiz fica em 3 de 4 critérios.
+- Uma instrução no prompt para aceitar descarte de mensagens foi ignorada pelo modelo, porque o cenário proíbe perda. O teste mede a saída, não o texto do prompt, então uma mudança desse tipo só reprova se piorar a resposta.
+- O teste usa um único cenário. Outro cenário exige outra entrada e outra rubrica.

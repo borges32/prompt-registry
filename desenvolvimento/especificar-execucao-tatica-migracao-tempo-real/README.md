@@ -24,6 +24,18 @@ Com base no plano passo a passo de migração do Forge, o prompt assume o papel 
 
 Substituir `{{resultado_prompt_2}}` pelo plano de migração do Forge. A saída é a especificação com análise de abordagens, escolha justificada, guia de execução operacional e checklist `[ ]` de validação do cutover.
 
+## Testes
+
+O [`promptfooconfig.yaml`](./promptfooconfig.yaml) usa como entrada a saída do passo 2 gerada no Checkpoint 05, em [`entrada/`](./entrada/). Roda com `gpt-4.1-mini`, com 3 repetições e sem cache:
+
+- **Determinístico:** as 4 seções, ao menos 2 abordagens, ao menos 5 itens `[ ]` no checklist, menção a DLQ, idempotência, lag, retry e a um formato de schema (Avro, Protobuf ou JSON Schema), resposta em até 120 s e custo de até US$ 0,02 por chamada.
+- **Juiz (`gpt-5.6-luna`):** confere se a abordagem de entrega é justificada, se há regra de DLQ com retry e backoff, se as métricas têm condição de alerta e se o checklist é verificável. Passa com 3 de 4 critérios, desde que os dois primeiros sejam atendidos.
+
+```bash
+npx promptfoo@latest eval -c desenvolvimento/especificar-execucao-tatica-migracao-tempo-real/promptfooconfig.yaml
+```
+
 ## Limitações conhecidas
 
-_A preencher_
+- O prompt não pede valores. Limites de retry, backoff e alertas costumam vir como "a definir" ou "acordados", e os itens do checklist nem sempre são verificáveis.
+- O procedimento de reprocessamento da DLQ quase nunca é detalhado.
