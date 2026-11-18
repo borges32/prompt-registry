@@ -1,0 +1,17 @@
+# Regressão do fornecedor no corrigir-manifesto-network-policy (CP10), 2026-11-18. promptfoo 0.125.1, sem cache.
+# Contexto: a suíte completa reprovou o prompt sem mudança no repositório. Asserts de conteúdo ok; latência > 5 s.
+# Referência do CP08 (rodada B, 5 repetições): gpt-5.4-mini 4/5, 2,6-3,2 s; gpt-4.1 5/5, 3,2-3,9 s.
+
+## Diagnóstico: config de então (gpt-5.4-mini), 3 repetições. 0 tokens de raciocínio; ~710 tokens de saída.
+gpt-5.4-mini (config original)                 0/3   latência 5.1-5.8s   custo máx US$ 0.00411  falhas: {"latency":3}
+
+## Comparação, 5 repetições cada (--repeat 5)
+gpt-5.4-mini                                   1/5   latência 4.7-6.2s   custo máx US$ 0.00403  falhas: {"latency":4,"sem_allow_all":1}
+gpt-4.1                                        5/5   latência 3.2-3.6s   custo máx US$ 0.00780  falhas: -
+gpt-5.4-mini, service_tier: priority           5/5   latência 2.3-2.8s   custo máx US$ 0.00791  falhas: -
+
+## Decisão: gpt-4.1. O prioritário é mais rápido, mas o gpt-5.4-mini ainda gera allow-all às vezes
+## (sem_allow_all falhou 1/5 no CP08 e 1/5 acima). gpt-4.1: 10/10 somando CP08 e CP10.
+
+## Conferência: config final (gpt-4.1), 3 repetições
+gpt-4.1 (config final)                         3/3   latência 3.6-4.0s   custo máx US$ 0.00623  falhas: -
