@@ -44,7 +44,7 @@ Cada fluxo liberado sai como um item próprio, com comentário, namespace e labe
 
 ## Testes
 
-O [`promptfooconfig.yaml`](./promptfooconfig.yaml) roda o manifesto permissivo, as regras e o mapa de serviços com `gpt-5.4-mini`, com 3 repetições e sem cache. Os asserts verificam se:
+O [`promptfooconfig.yaml`](./promptfooconfig.yaml) roda o manifesto permissivo, as regras e o mapa de serviços com `gpt-4.1`, com 3 repetições e sem cache. Os asserts verificam se:
 
 - O YAML tem `kind: NetworkPolicy` e `policyTypes` com `Ingress` e `Egress`.
 - A saída não contém `- {}`.
@@ -58,7 +58,8 @@ npx promptfoo@latest eval -c devops/corrigir-manifesto-network-policy/promptfooc
 
 ## Limitações conhecidas
 
-- O manifesto completo é longo: `gpt-4o-mini`, `gpt-4.1-mini` e outros modelos testados excedem 5 s.
+- O manifesto completo é longo: `gpt-4o-mini`, `gpt-4.1-mini` e outros modelos testados excedem 5 s. O `gpt-5.4-mini`, usado até 2026-11, passou a exceder 5 s sem mudança no prompt (o fornecedor ficou mais lento) e foi trocado pelo `gpt-4.1`.
+- Com o `gpt-4.1`, o custo por chamada fica em cerca de US$ 0,008, perto do limite de US$ 0,01. Se o modelo passar a responder com mais tokens, o assert de custo reprova.
 - Os asserts usam regex sobre o YAML e dependem do formato do texto. Eles não verificam o gateway de API, o DNS nem o default-deny, e não aplicam o manifesto em um cluster.
 - `kubernetes.io/metadata.name` exige Kubernetes 1.21 ou superior e não precisa constar nos snapshots.
 - O ingress não restringe portas, porque as entradas não as declaram.

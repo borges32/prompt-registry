@@ -107,6 +107,8 @@ Custos medidos na linha de base local ([`execucao-local-baseline.txt`](./execuca
 
 Escolhi C porque a suíte inteira, a cada PR, gasta 5 a 10 vezes mais para testar prompts que não mudaram, e a única regressão que ela pegaria a mais, a do fornecedor, não depende do PR. Essa regressão é coberta pela execução semanal. O risco de "só alterados" seria uma dependência escondida entre prompts, e ele foi eliminado no desenho dos testes: cada pasta tem seu próprio script de frontmatter e suas próprias entradas, e a cadeia do Forge usa saídas gravadas.
 
+**A regressão do fornecedor aconteceu.** Em 2026-11-18, a suíte completa reprovou o `corrigir-manifesto-network-policy` sem nenhuma mudança no prompt. Todos os asserts de conteúdo passaram, mas a latência do `gpt-5.4-mini` tinha subido de 2,6 a 3,2 s (CP08) para 4,7 a 6,2 s, acima do limite de 5 s. Uma suíte que rodasse só nos PRs não teria visto isso. A correção foi decidida com uma nova comparação, em [`latencia-fornecedor.txt`](./latencia-fornecedor.txt): trocar para o `gpt-4.1` (5 de 5, 3,2 a 3,6 s). O processamento prioritário do `gpt-5.4-mini` também cumpria os 5 s, mas mantinha a falha ocasional de "allow all" desse modelo.
+
 ### Decisão 4: o custo de chamar modelo a cada PR
 
 | Opção | Ganha | Perde |
@@ -120,7 +122,7 @@ O custo foi controlado pelo escopo, e não pelo cache:
 
 - só as suítes afetadas rodam (decisão 3);
 - um push novo no mesmo PR cancela a execução anterior (`concurrency` com `cancel-in-progress`);
-- modelos pequenos para gerar (`gpt-4o-mini`, `gpt-4.1-mini`, `gpt-5.4-mini`), e o juiz só onde precisa;
+- modelos pequenos para gerar (`gpt-4o-mini`, `gpt-4.1-mini`), e um maior (`gpt-4.1`) só no manifesto de NetworkPolicy, onde os pequenos não cumprem 5 s; o juiz só onde precisa;
 - cada suíte tem assert de `cost` por chamada, que reprova o build se uma mudança no prompt multiplicar o consumo de tokens;
 - `max-parallel: 4` e `max-concurrency: 4` limitam a rajada de chamadas ao fornecedor;
 - `timeout-minutes: 20` corta um job travado.

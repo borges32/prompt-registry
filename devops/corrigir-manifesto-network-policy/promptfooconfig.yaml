@@ -3,8 +3,10 @@
 prompts:
   - file://prompt-sem-frontmatter.cjs
 providers:
-  # gpt-4o-mini e gpt-4.1-mini excedem 5s neste manifesto. Comparação na curadoria do CP08.
-  - openai:gpt-5.4-mini
+  # gpt-4o-mini e gpt-4.1-mini excedem 5s neste manifesto (curadoria do CP08).
+  # gpt-5.4-mini passou a exceder 5s em 2026-11 (4,7 a 6,2s) e às vezes gera allow-all.
+  # gpt-4.1: 10/10 somando CP08 e CP10, 3,2 a 3,9s. Comparação em Entregas/checkpoint-10/latencia-fornecedor.txt.
+  - openai:gpt-4.1
   # Segundo fornecedor do enunciado: descomente depois de incluir ANTHROPIC_API_KEY no .env.
   # - anthropic:messages:claude-haiku-5-5
 evaluateOptions:
