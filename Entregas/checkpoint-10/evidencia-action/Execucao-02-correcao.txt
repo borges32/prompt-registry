@@ -1,0 +1,65 @@
+# nesta exeução o prompt passou com sucesso.
+
+Run promptfoo/promptfoo-action@v1
+Force run enabled - running evaluation regardless of changes
+Setting up cache
+/usr/local/bin/npx promptfoo@0.125.1 eval -c desenvolvimento/diagnosticar-migracao-batch-tempo-real/promptfooconfig.yaml -o /home/runner/work/prompt-registry/prompt-registry/output-1795001302915-03405c1d-c846-4140-8007-5334c7a22d6e.json --no-share --max-concurrency 4 --no-progress-bar --no-cache
+npm warn exec The following package was not found and will be installed: promptfoo@0.125.1
+npm warn deprecated @modelcontextprotocol/server-filesystem@2026.8.31: Date-based versions are no longer published. This package has resumed semantic versioning at 1.0.0: install the latest version.
+npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+Cache is disabled.
+Starting evaluation eval-xxm-2026-11-18T11:29:00
+[Evaluation] Starting 3 test cases...
+Running 3 test cases (up to 4 at a time)...
+[Evaluation] ✓ Complete! 3/3 tests in 14s
+Notice: Evaluation completed: 3/3 tests in 14s
+
+┌────────────────────────────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ dados_do_sistema_e_ambiente                                │ [openai:gpt-4.1-mini]                                      │
+│                                                            │ desenvolvimento/diagnosticar-migracao-batch-tempo-real/pr… │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ file:///home/runner/work/prompt-registry/prompt-registry/… │ [PASS] # Relatório de Diagnóstico de Arquitetura: Projeto  │
+│                                                            │ Forge                                                      │
+│                                                            │ ## 1. Mapeamento do Estado Atual                           │
+│                                                            │ - **Funcionamento do lote atual:**                         │
+│                                                            │   O Forge opera em batch, com um job agendado via cron a   │
+│                                                            │ cada 60 minutos ("forge-batch-ingest"). Esse job lê todo o │
+│                                                            │ vo...                                                      │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ file:///home/runner/work/prompt-registry/prompt-registry/… │ [PASS] # Relatório de Diagnóstico de Arquitetura: Projeto  │
+│                                                            │ Forge                                                      │
+│                                                            │ ## 1. Mapeamento do Estado Atual                           │
+│                                                            │ - **Funcionamento do lote atual:**                         │
+│                                                            │   O Forge opera em batch, com um job agendado via cron a   │
+│                                                            │ cada 60 minutos ("forge-batch-ingest"). Esse job lê todo o │
+│                                                            │ vo...                                                      │
+├────────────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ file:///home/runner/work/prompt-registry/prompt-registry/… │ [PASS] # Relatório de Diagnóstico de Arquitetura: Projeto  │
+│                                                            │ Forge                                                      │
+│                                                            │ ## 1. Mapeamento do Estado Atual                           │
+│                                                            │ - **Funcionamento do lote atual:**                         │
+│                                                            │   O Forge opera em batch, com um job agendado via cron a   │
+│                                                            │ cada 60 minutos ("forge-batch-ingest"). Esse job lê todo o │
+│                                                            │ vo...                                                      │
+└────────────────────────────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+✓ Eval complete (ID: eval-xxm-2026-11-18T11:29:00)
+
+» View results: promptfoo view
+» Feedback: https://promptfoo.dev/feedback
+
+Total Tokens: 12,518
+  Provider: 6,599 (2,742 prompt, 3,857 completion)
+  Grading: 5,919 (5,279 prompt, 640 completion, 337 reasoning)
+
+Repeat stability:
+  1 repeated group; 0 unstable
+
+Results:
+  ✓ 3 passed (100%)
+  0 failed (0%)
+  0 errors (0%)
+Duration: 14s (concurrency: 4)
+
+Writing output to /home/runner/work/prompt-registry/prompt-registry/output-1795001302915-03405c1d-c846-4140-8007-5334c7a22d6e.json
+Cache metrics after evaluation
+
